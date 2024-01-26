@@ -9,7 +9,7 @@ The precise classification of breast cancer subtypes is crucial for clinical dia
   <br>"updataD.m" is the function to iterate the weights.
 ## In the multi-task learning model:
   Run "binaryC.py" to get the performance of binary classification of DiffRS-net.
-  <br>Run "multiCn.py" to get the performance of multi-classification of DiffRS-net.
+  <br>Run "multiC.py" to get the performance of multi-classification of DiffRS-net.
   <br> Contact: If you have any questions or suggestions with the code, please let us know. Contact Yiran Huang at hyr@gxu.edu.cn
 ## about:
 title = {Multi-Task Learning Framework for Classifying Breast Cancer Subtypes on Multi-Omics data)
