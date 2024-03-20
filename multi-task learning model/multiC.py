@@ -94,7 +94,7 @@ class EarlyStopping:
             self.trace_func(
                 f'Validation loss decreased ({self.val_loss_min:.6f} --> {val_loss:.6f}).  Saving model ...')
         torch.save(model.state_dict(), self.path)
-        self.val_loss_min = val_loss
+        self.val_loss_min = val_loss_min
 
 
 class mtlAttention(nn.Module):
@@ -318,7 +318,7 @@ for epoch in (range(num_epochs)):
         output2 = output2.squeeze()
         output3 = output3.squeeze()
         net.train()
-        optimizer.zero_grad()  # 将梯度清0
+        optimizer.zero_grad()  # 清0
         y = y.to(torch.int64)
 
         loss = (loss_fn(output1, y) + loss_fn(output2, y) + loss_fn(output3, y)) / 3
@@ -346,7 +346,7 @@ for epoch in (range(num_epochs)):
                 running_loss2,
                 running_loss3))
 
-### Test
+
 test1, test2, test3 = net.forward_one(Xg_test.clone().detach(), Xm_test.clone().detach(), Xl_test.clone().detach())
 test1 = test1.cpu().detach().numpy()
 test2 = test2.cpu().detach().numpy()
@@ -357,12 +357,5 @@ pre1 = np.argmax(test1, axis=1)
 pre2 = np.argmax(test2, axis=1)
 pre3 = np.argmax(test3, axis=1)
 pre_all = np.argmax(Test_all, axis=1)
-
-
-print("预测值:", np.array(pre_all))
-
-print("------------------------------------")
-print("准确率:", accuracy_score(y_test, pre_all))
-print("F1:", f1_score(y_test, pre_all, average='macro'))
 
 print("time :", time.time() - start)
