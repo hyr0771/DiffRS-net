@@ -88,10 +88,10 @@ class EarlyStopping:
         torch.save(model.state_dict(), self.path)
         self.val_loss_min = val_loss
 
-mrna = pd.read_csv('data/mRNA.txt', sep='\t')
-mir = pd.read_csv('data/miRNA.txt', sep='\t')
-meth = pd.read_csv('data/Meth.txt', sep='\t')
-clincal = pd.read_csv('data/label.txt', sep='\t')
+mrna = pd.read_csv('D:/jupyter notebook/ThreeOmics/data/mRNA.txt', sep='\t')
+mir = pd.read_csv('D:/jupyter notebook/ThreeOmics/data/miRNA.txt', sep='\t')
+meth = pd.read_csv('D:/jupyter notebook/ThreeOmics/data/Meth.txt', sep='\t')
+clincal = pd.read_csv('D:/jupyter notebook/ThreeOmics/data/label.txt', sep='\t')
 
 mrna.index = mrna['gene_name']
 del mrna['gene_name']
@@ -127,28 +127,17 @@ Basal_mrna = mrna[mrna['label'].values == 0]
 Her2_mrna = mrna[mrna['label'].values == 1]
 LumA_mrna = mrna[mrna['label'].values == 2]
 LumB_mrna = mrna[mrna['label'].values == 3]
-print('Basal_mrna', Basal_mrna.shape)
-print('Her2_mrna', Her2_mrna.shape)
-print('LumA_mrna', LumA_mrna.shape)
-print('LumB_mrna', LumB_mrna.shape)
-print('---------------------------------------------------------')
+
 Basal_mir = mir[mir['label'].values == 0]
 Her2_mir = mir[mir['label'].values == 1]
 LumA_mir = mir[mir['label'].values == 2]
 LumB_mir = mir[mir['label'].values == 3]
-print('Basal_mir', Basal_mir.shape)
-print('Her2_mir', Her2_mir.shape)
-print('LumA_mir', LumA_mir.shape)
-print('LumB_mir', LumB_mir.shape)
-print('---------------------------------------------------------')
+
 Basal_meth = meth[meth['label'].values == 0]
 Her2_meth = meth[meth['label'].values == 1]
 LumA_meth = meth[meth['label'].values == 2]
 LumB_meth = meth[meth['label'].values == 3]
-print('Basal_mir', Basal_meth.shape)
-print('Her2_mir', Her2_meth.shape)
-print('LumA_mir', LumA_meth.shape)
-print('LumB_mir', LumB_meth.shape)
+
 
 def connect(A,B):
     data = pd.concat([A,B],axis=0)
@@ -166,7 +155,7 @@ def change_label(data):
     data['label'] = np.array(new_label)
     return data
 
-# connect 2 classification
+
 Basal_Her2_mrna = connect(Basal_mrna, Her2_mrna)
 Basal_LumA_mrna = connect(Basal_mrna, LumA_mrna)
 Basal_LumB_mrna = connect(Basal_mrna, LumB_mrna)
@@ -195,7 +184,7 @@ Her2_LumB_meth = connect(Her2_meth, LumB_meth)
 Lum_AB_meth = connect(LumA_meth, LumB_meth)
 
 
-# 最终训练数据
+
 Basal_Her2_mrna = change_label(Basal_Her2_mrna)
 Basal_Her2_mir = connect(Basal_mir, Her2_mir)
 Basal_Her2_meth = connect(Basal_meth, Her2_meth)
@@ -342,10 +331,9 @@ def model(omics1, omics2, omics3, learningRate, weightDecay):
 
     label = omics1['label']
     random_state = random.randint(1, 1000)
-    #     print('random is ',random_state)
+
     skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=random_state)
 
-    # 划分训练集、测试集，testsize = 0.2
     j = 0
     for train_index, test_index in skf.split(xg_data, label):
         Xg_train, Xg_test = xg_data[train_index, :], xg_data[test_index, :]
@@ -360,17 +348,17 @@ def model(omics1, omics2, omics3, learningRate, weightDecay):
     earlyStoppingPatience = 100
 
     learningRate = learningRate
-    #     print('learningRate is :',learningRate )
+
 
     weightDecay = weightDecay
-    #     print('weightDecay is :',weightDecay)
+
     num_epochs = 500000
 
     # change form
     y_train = np.array(yg_train).flatten().astype(int)
     y_test = np.array(yg_test).flatten().astype(int)
 
-    # 输入数据转为tensor类型
+
     Xg = torch.tensor(Xg_train, dtype=torch.float32).cuda()
     Xm = torch.tensor(Xm_train, dtype=torch.float32).cuda()
     Xl = torch.tensor(Xl_train, dtype=torch.float32).cuda()
@@ -381,7 +369,7 @@ def model(omics1, omics2, omics3, learningRate, weightDecay):
 
     y = torch.tensor(y_train, dtype=torch.float32).cuda()
 
-    # 对tensor进行打包
+
     ds = TensorDataset(Xg, Xm, Xl, y)
     loader = DataLoader(ds, batch_size=y_train.shape[0], shuffle=True)
 
@@ -451,8 +439,6 @@ def model(omics1, omics2, omics3, learningRate, weightDecay):
 
     return ACC, F1, AUC
 
-
-#####  basal vs her2 
 ACC = []
 F1 = []
 AUC = []
